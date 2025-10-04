@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travejor - Traveler Profile</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+  <header>Travejor</header>
+
+  <div class="container">
+    <div id="loading" class="loading">Loading profile...</div>
+    <div id="error" class="error" style="display:none;"></div>
+
+    <div id="profile" style="display:none;">
+      <img id="avatar" class="avatar" src="" alt="Avatar" />
+      <h2 id="username"></h2>
+      <p id="location"></p>
+      <p id="bio"></p>
+
+      <div class="interests" id="interests"></div>
+
+      <hr />
+
+      <h3>Edit Profile</h3>
+      <div class="field">
+        <label for="editBio">Bio:</label>
+        <textarea id="editBio" rows="3"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="editInterests">Interests (comma separated):</label>
+        <input id="editInterests" type="text" />
+      </div>
+
+      <button id="saveBtn">Save Changes</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
