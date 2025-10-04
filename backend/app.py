@@ -26,8 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/", StaticFiles(directory="../frontend", html=True), name="frontend")
-
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 def now_iso():
@@ -86,6 +84,7 @@ def get_profile(profile_id: str):
     
     data = doc.to_dict()
     data["id"] = profile_id
+    data["avatarURL"] = data.get("avatarURL", "")
     return data
 
 @app.put("/api/profiles/{profile_id}", response_model=ProfileResponse)
@@ -114,3 +113,5 @@ def update_profile(profile_id: str, update: ProfileUpdate):
     new_doc = doc_ref.get().to_dict()
     new_doc["id"] = profile_id
     return new_doc
+
+app.mount("/", StaticFiles(directory="../frontend", html=True), name="frontend")
