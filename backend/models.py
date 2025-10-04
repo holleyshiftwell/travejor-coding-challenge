@@ -11,6 +11,12 @@ class ProfileBase(BaseModel):
 
 class ProfileResponse(BaseModel):
     id: str
+    username: str
+    email: str
+    bio: Optional[str] = ""
+    interests: Optional[List[str]] = []
+    location: Optional[str] = ""
+    avatarURL: Optional[str] = None
     createdAt: str
     updatedAt: str
 
