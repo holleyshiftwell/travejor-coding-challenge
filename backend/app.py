@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/frontend", StaticFiles(directory="../frontend", html=True), name="frontend")
+app.mount("/", StaticFiles(directory="../frontend", html=True), name="frontend")
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 
@@ -53,7 +53,7 @@ def verify_jwt(authorization: Optional[str] = Header(None)) -> str:
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-@app.post("/profiles", response_model=ProfileResponse, status_code=201)
+@app.post("/api/profiles", response_model=ProfileResponse, status_code=201)
 def create_profile(p: ProfileBase):
     existing = profiles_col.where("username", "==", p.username).limit(1).get()
     if existing:
@@ -78,7 +78,7 @@ def create_profile(p: ProfileBase):
     doc["id"] = profile_id
     return doc
 
-@app.get("/profiles/{profile_id}", response_model=ProfileResponse)
+@app.get("/api/profiles/{profile_id}", response_model=ProfileResponse)
 def get_profile(profile_id: str):
     doc = profiles_col.document(profile_id).get()
     if not doc.exists:
@@ -88,7 +88,7 @@ def get_profile(profile_id: str):
     data["id"] = profile_id
     return data
 
-@app.put("/profiles/{profile_id}", response_model=ProfileResponse)
+@app.put("/api/profiles/{profile_id}", response_model=ProfileResponse)
 def update_profile(profile_id: str, update: ProfileUpdate):
     try:
         doc_ref = profiles_col.document(profile_id)
