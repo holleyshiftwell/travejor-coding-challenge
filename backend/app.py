@@ -7,6 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from google.api_core.exceptions import NotFound
 import jwt
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from db import profiles_col
 from models import ProfileBase, ProfileResponse, ProfileUpdate
 
