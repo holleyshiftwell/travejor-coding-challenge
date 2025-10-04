@@ -16,7 +16,6 @@ from models import ProfileBase, ProfileResponse, ProfileUpdate
 
 app = FastAPI(title="Travejor Profile API")
 
-#CORS - allow localhost dev frontends
 allowed = os.getenv("ALLOWED_ORIGINS", "http://localhost:5500").split(",")
 app.add_middleware(
     CORSMiddleware,

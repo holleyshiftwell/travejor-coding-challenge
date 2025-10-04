@@ -1,43 +1,659 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Travejor - Traveler Profile</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travejor - Traveler Profiles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: #FF6A00;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-container h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .text-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #FF6A00;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn.primary {
+            background-color: #FF6A00;
+            color: white;
+        }
+
+        .btn.primary:hover {
+            background-color: #e55a00;
+            transform: translateY(-1px);
+        }
+
+        .btn.secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn.secondary:hover {
+            background-color: #545b62;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .loading {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .profile-container {
+            margin-top: 2rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FF6A00;
+        }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .location, .email, .timestamp {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .profile-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-section, .interests-section, .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-section h3, .interests-section h3, .info-section h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        #profileBio {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .interests-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .interest-chip {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 0.4rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .no-interests, .no-info {
+            color: #999;
+            font-style: italic;
+        }
+
+        .info-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .edit-form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .edit-form-container h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .profile-section, .edit-form-container {
+                padding: 1.5rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .text-input {
+                min-width: 100%;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .profile-section, .edit-form-container {
+                padding: 1rem;
+            }
+            
+            .avatar {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>Travejor</header>
+    <header class="header">
+        <h1>Travejor</h1>
+    </header>
 
-  <div class="container">
-    <div id="loading" class="loading">Loading profile...</div>
-    <div id="error" class="error" style="display:none;"></div>
+    <main class="container">
+        <section class="profile-section">
+            <div class="search-container">
+                <h2>Find Traveler Profile</h2>
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="profileIdInput" 
+                        placeholder="Enter profile ID (e.g., trav_abc123)" 
+                        class="text-input"
+                    >
+                    <button id="fetchProfileBtn" class="btn primary">Fetch Profile</button>
+                </div>
+            </div>
 
-    <div id="profile" style="display:none;">
-      <img id="avatar" class="avatar" src="" alt="Avatar" />
-      <h2 id="username"></h2>
-      <p id="location"></p>
-      <p id="bio"></p>
+            <div id="loading" class="loading hidden">
+                <p>Loading profile...</p>
+            </div>
 
-      <div class="interests" id="interests"></div>
+            <div id="error" class="error hidden">
+                <p id="errorMessage"></p>
+            </div>
 
-      <hr />
+            <div id="profileContainer" class="profile-container hidden">
+                <div class="profile-header">
+                    <img id="profileAvatar" src="" alt="Profile avatar" class="avatar hidden">
+                    <div class="profile-info">
+                        <h2 id="profileUsername"></h2>
+                        <p id="profileEmail" class="email"></p>
+                        <p id="profileLocation" class="location"></p>
+                    </div>
+                </div>
+                
+                <div class="profile-details">
+                    <div class="bio-section">
+                        <h3>Bio</h3>
+                        <p id="profileBio"></p>
+                    </div>
+                    
+                    <div class="interests-section">
+                        <h3>Interests</h3>
+                        <div id="profileInterests" class="interests-container"></div>
+                    </div>
 
-      <h3>Edit Profile</h3>
-      <div class="field">
-        <label for="editBio">Bio:</label>
-        <textarea id="editBio" rows="3"></textarea>
-      </div>
+                    <div class="info-section">
+                        <h3>Profile Information</h3>
+                        <div class="info-items">
+                            <p id="profileCreatedAt" class="timestamp"></p>
+                            <p id="profileUpdatedAt" class="timestamp"></p>
+                        </div>
+                    </div>
+                </div>
 
-      <div class="field">
-        <label for="editInterests">Interests (comma separated):</label>
-        <input id="editInterests" type="text" />
-      </div>
+                <button id="editProfileBtn" class="btn secondary">Edit Profile</button>
+            </div>
+        </section>
 
-      <button id="saveBtn">Save Changes</button>
-    </div>
-  </div>
+        <section id="editFormContainer" class="edit-form-container hidden">
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm" class="edit-form">
+                <div class="form-group">
+                    <label for="editBio">Bio</label>
+                    <textarea 
+                        id="editBio" 
+                        class="text-input" 
+                        rows="4"
+                        placeholder="Tell us about yourself..."
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editInterests">Interests (comma-separated)</label>
+                    <input 
+                        type="text" 
+                        id="editInterests" 
+                        class="text-input" 
+                        placeholder="hiking, photography, food..."
+                    >
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+                    <button type="submit" class="btn primary">Save Changes</button>
+                </div>
+            </form>
+        </section>
+    </main>
 
-  <script src="script.js"></script>
+    <script>
+        class ProfileManager {
+            constructor() {
+                this.baseUrl = '/api/profiles';
+                this.currentProfileId = null;
+                this.initializeElements();
+                this.attachEventListeners();
+            }
+
+            initializeElements() {
+                this.profileIdInput = document.getElementById('profileIdInput');
+                this.fetchProfileBtn = document.getElementById('fetchProfileBtn');
+                this.loadingElement = document.getElementById('loading');
+                this.errorElement = document.getElementById('error');
+                this.errorMessageElement = document.getElementById('errorMessage');
+                this.profileContainer = document.getElementById('profileContainer');
+                this.profileAvatar = document.getElementById('profileAvatar');
+                this.profileUsername = document.getElementById('profileUsername');
+                this.profileEmail = document.getElementById('profileEmail');
+                this.profileLocation = document.getElementById('profileLocation');
+                this.profileBio = document.getElementById('profileBio');
+                this.profileInterests = document.getElementById('profileInterests');
+                this.profileCreatedAt = document.getElementById('profileCreatedAt');
+                this.profileUpdatedAt = document.getElementById('profileUpdatedAt');
+                this.editProfileBtn = document.getElementById('editProfileBtn');
+                this.editFormContainer = document.getElementById('editFormContainer');
+                this.editProfileForm = document.getElementById('editProfileForm');
+                this.editBio = document.getElementById('editBio');
+                this.editInterests = document.getElementById('editInterests');
+                this.cancelEditBtn = document.getElementById('cancelEditBtn');
+            }
+
+            attachEventListeners() {
+                this.fetchProfileBtn.addEventListener('click', () => this.fetchProfile());
+                this.profileIdInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.fetchProfile();
+                });
+                this.editProfileBtn.addEventListener('click', () => this.showEditForm());
+                this.cancelEditBtn.addEventListener('click', () => this.hideEditForm());
+                this.editProfileForm.addEventListener('submit', (e) => this.handleProfileUpdate(e));
+            }
+
+            async fetchProfile() {
+                const profileId = this.profileIdInput.value.trim();
+                
+                if (!profileId) {
+                    this.showError('Please enter a profile ID');
+                    return;
+                }
+
+                this.currentProfileId = profileId;
+                this.showLoading();
+                this.hideError();
+                this.hideProfile();
+                this.hideEditForm();
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/${profileId}`);
+                    
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('Profile not found. Please check the profile ID.');
+                        } else {
+                            throw new Error(`Failed to fetch profile: ${response.status} ${response.statusText}`);
+                        }
+                    }
+
+                    const profile = await response.json();
+                    this.displayProfile(profile);
+                    
+                } catch (error) {
+                    this.showError(error.message);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            displayProfile(profile) {
+                if (profile.avatarURL && profile.avatarURL.trim() !== '') {
+                    this.profileAvatar.src = profile.avatarURL;
+                    this.profileAvatar.alt = `${profile.username || 'User'}'s avatar`;
+                    this.profileAvatar.classList.remove('hidden');
+                } else {
+                    this.profileAvatar.classList.add('hidden');
+                }
+
+                if (profile.username) {
+                    this.profileUsername.textContent = profile.username;
+                } else {
+                    this.profileUsername.textContent = 'Unknown User';
+                }
+
+                if (profile.email) {
+                    this.profileEmail.textContent = profile.email;
+                } else {
+                    this.profileEmail.textContent = 'No email provided';
+                }
+
+                if (profile.location) {
+                    this.profileLocation.textContent = profile.location;
+                } else {
+                    this.profileLocation.textContent = 'No location specified';
+                }
+
+                if (profile.bio) {
+                    this.profileBio.textContent = profile.bio;
+                } else {
+                    this.profileBio.textContent = 'No bio provided';
+                }
+
+                this.profileInterests.innerHTML = '';
+                if (profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0) {
+                    const validInterests = profile.interests.filter(interest => 
+                        interest && interest.trim() !== ''
+                    );
+                    
+                    if (validInterests.length > 0) {
+                        validInterests.forEach(interest => {
+                            const chip = document.createElement('span');
+                            chip.className = 'interest-chip';
+                            chip.textContent = interest.trim();
+                            this.profileInterests.appendChild(chip);
+                        });
+                    } else {
+                        this.profileInterests.innerHTML = '<span class="no-interests">No interests specified</span>';
+                    }
+                } else {
+                    this.profileInterests.innerHTML = '<span class="no-interests">No interests specified</span>';
+                }
+
+                if (profile.createdAt) {
+                    const createdDate = new Date(profile.createdAt).toLocaleString();
+                    this.profileCreatedAt.textContent = `Created: ${createdDate}`;
+                } else {
+                    this.profileCreatedAt.textContent = 'Created: Unknown';
+                }
+
+                if (profile.updatedAt) {
+                    const updatedDate = new Date(profile.updatedAt).toLocaleString();
+                    this.profileUpdatedAt.textContent = `Updated: ${updatedDate}`;
+                } else {
+                    this.profileUpdatedAt.textContent = 'Updated: Unknown';
+                }
+
+                this.showProfile();
+            }
+
+            showEditForm() {
+                this.editBio.value = this.profileBio.textContent;
+                
+                const interests = Array.from(this.profileInterests.querySelectorAll('.interest-chip'))
+                    .map(chip => chip.textContent)
+                    .join(', ');
+                this.editInterests.value = interests;
+
+                this.profileContainer.classList.add('hidden');
+                this.editFormContainer.classList.remove('hidden');
+            }
+
+            hideEditForm() {
+                this.editFormContainer.classList.add('hidden');
+                this.profileContainer.classList.remove('hidden');
+            }
+
+            async handleProfileUpdate(event) {
+                event.preventDefault();
+                
+                try {
+                    const bio = this.editBio.value.trim();
+                    const interests = this.editInterests.value.trim()
+                        .split(',')
+                        .map(interest => interest.trim())
+                        .filter(interest => interest !== '');
+
+                    const updateData = {};
+                    
+                    if (bio !== this.profileBio.textContent) {
+                        updateData.bio = bio;
+                    }
+                    
+                    const currentInterests = Array.from(this.profileInterests.querySelectorAll('.interest-chip'))
+                        .map(chip => chip.textContent);
+                        
+                    if (JSON.stringify(interests) !== JSON.stringify(currentInterests)) {
+                        updateData.interests = interests;
+                    }
+
+                    if (Object.keys(updateData).length === 0) {
+                        this.hideEditForm();
+                        return;
+                    }
+                    
+                    const response = await fetch(`${this.baseUrl}/${this.currentProfileId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to update profile: ${response.status} ${response.statusText}`);
+                    }
+
+                    const updatedProfile = await response.json();
+                    this.displayProfile(updatedProfile);
+                    this.hideEditForm();
+                    
+                } catch (error) {
+                    this.showError(error.message);
+                }
+            }
+
+            showLoading() {
+                this.loadingElement.classList.remove('hidden');
+            }
+
+            hideLoading() {
+                this.loadingElement.classList.add('hidden');
+            }
+
+            showError(message) {
+                this.errorMessageElement.textContent = message;
+                this.errorElement.classList.remove('hidden');
+            }
+
+            hideError() {
+                this.errorElement.classList.add('hidden');
+            }
+
+            showProfile() {
+                this.profileContainer.classList.remove('hidden');
+            }
+
+            hideProfile() {
+                this.profileContainer.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProfileManager();
+        });
+    </script>
 </body>
 </html>
