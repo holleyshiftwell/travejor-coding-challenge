@@ -4,3 +4,4 @@ firebase-admin
 python-dotenv
 PyJWT
 pydantic
+pydantic[email]

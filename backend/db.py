@@ -10,6 +10,9 @@ def init_firestore():
     key_path = os.getenv("FIREBASE_SERVICE_ACCOUNT")
     key_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
 
+    print("Initializing Firestore...")
+    print("Using key_path:", key_path)
+
     if key_path:
         cred = credentials.Certificate(key_path)
     elif key_json:

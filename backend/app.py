@@ -2,7 +2,8 @@ import os
 import uuid
 from datetime import datetime, timezone
 from typing import Optional, List
-from fastapi import FASTAPI, HTTPException, Depends, Header, status
+from fastapi import FastAPI, HTTPException, Depends, Header, status
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from google.api_core.exceptions import NotFound
 import jwt
@@ -13,7 +14,7 @@ load_dotenv()
 from db import profiles_col
 from models import ProfileBase, ProfileResponse, ProfileUpdate
 
-app = FASTAPI(title="Travejor Profile API")
+app = FastAPI(title="Travejor Profile API")
 
 #CORS - allow localhost dev frontends
 allowed = os.getenv("ALLOWED_ORIGINS", "http://localhost:5500").split(",")
@@ -25,6 +26,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/frontend", StaticFiles(directory="../frontend", html=True), name="frontend")
+
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 def now_iso():
@@ -32,7 +35,7 @@ def now_iso():
 
 def verify_jwt(authorization: Optional[str] = Header(None)) -> str:
     if not JWT_SECRET:
-        None #cant access if no secret set!!!
+        None
     
     if not authorization:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing Authorization header")
@@ -50,7 +53,7 @@ def verify_jwt(authorization: Optional[str] = Header(None)) -> str:
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-@app.post("/profiles", response_model=ProfileResponse, status_code=status.HTTP_201_CREATED)
+@app.post("/profiles", response_model=ProfileResponse, status_code=201)
 def create_profile(p: ProfileBase):
     existing = profiles_col.where("username", "==", p.username).limit(1).get()
     if existing:
@@ -86,7 +89,7 @@ def get_profile(profile_id: str):
     return data
 
 @app.put("/profiles/{profile_id}", response_model=ProfileResponse)
-def update_profile(profile_id: str, update: ProfileUpdate, auth=Depends(verify_jwt)):
+def update_profile(profile_id: str, update: ProfileUpdate):
     try:
         doc_ref = profiles_col.document(profile_id)
         doc = doc_ref.get()
