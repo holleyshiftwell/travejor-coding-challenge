@@ -12,7 +12,7 @@ ALLOWED_ORIGINS=http://localhost:5500
 
 # SETUP STEPS:
 1. Clone the repo
-git clone <your_repo_url>
+git clone https://github.com/holleyshiftwell/travejor-coding-challenge.git
 cd travejor-coding-challenge
 
 2. Activate virtual environment
